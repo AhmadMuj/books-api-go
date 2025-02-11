@@ -1,0 +1,21 @@
+FROM golang:1.22
+
+WORKDIR /app
+
+# Install air for hot reload
+RUN go install github.com/cosmtrek/air@latest
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    redis-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+EXPOSE 8080
+
+CMD ["air", "-c", ".air.toml"]
