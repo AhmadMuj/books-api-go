@@ -1,4 +1,3 @@
-// internal/middleware/request_id.go
 package middleware
 
 import (

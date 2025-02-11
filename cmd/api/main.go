@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/AhmadMuj/books-api-go/internal/cache"
 	"github.com/AhmadMuj/books-api-go/internal/config"
 	"github.com/AhmadMuj/books-api-go/internal/handlers"
 	"github.com/AhmadMuj/books-api-go/internal/repository"
@@ -31,11 +32,18 @@ func main() {
 		log.Fatal("Failed to initialize database:", err)
 	}
 
+	cacheInstance, err := cache.NewRedisCache(cfg)
+
+	if err != nil {
+		log.Fatal("Failed to initialize cache:", err)
+	}
+	defer cacheInstance.Close()
+
 	// Initialize repository
 	bookRepo := repository.NewBookRepository(db.DB)
 
 	// Initialize service
-	bookService := service.NewBookService(bookRepo)
+	bookService := service.NewBookService(bookRepo, cacheInstance)
 
 	// Initialize handler
 	bookHandler := handlers.NewBookHandler(bookService)

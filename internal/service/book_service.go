@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/AhmadMuj/books-api-go/internal/cache"
 	"github.com/AhmadMuj/books-api-go/internal/models"
 	"github.com/AhmadMuj/books-api-go/internal/repository"
 )
@@ -16,11 +17,13 @@ type BookService interface {
 }
 
 type bookService struct {
-	repo repository.BookRepository
+	repo  repository.BookRepository
+	cache cache.Cache
 }
 
-func NewBookService(repo repository.BookRepository) BookService {
+func NewBookService(repo repository.BookRepository, cache cache.Cache) BookService {
 	return &bookService{
-		repo: repo,
+		repo:  repo,
+		cache: cache,
 	}
 }
