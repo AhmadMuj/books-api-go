@@ -53,8 +53,15 @@ func (r *BookRepositoryPG) GetByID(ctx context.Context, id uint) (*models.Book, 
 	return &book, nil
 }
 
-func (r *BookRepositoryPG) List(ctx context.Context, limit, offset int) ([]models.Book, error) {
+func (r *BookRepositoryPG) List(ctx context.Context, limit, offset int) ([]models.Book, int64, error) {
 	var books []models.Book
+	var total int64
+
+	// Get total count
+	if err := r.db.WithContext(ctx).Model(&models.Book{}).Count(&total).Error; err != nil {
+		return nil, 0, errors.NewDatabaseError(err)
+	}
+
 	result := r.db.WithContext(ctx).
 		Limit(limit).
 		Offset(offset).
@@ -62,9 +69,9 @@ func (r *BookRepositoryPG) List(ctx context.Context, limit, offset int) ([]model
 		Find(&books)
 
 	if result.Error != nil {
-		return nil, errors.NewDatabaseError(result.Error)
+		return nil, 0, errors.NewDatabaseError(result.Error)
 	}
-	return books, nil
+	return books, total, nil
 }
 
 func (r *BookRepositoryPG) Update(ctx context.Context, book *models.Book) error {
