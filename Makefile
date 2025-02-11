@@ -19,6 +19,6 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 swagger:
-	swag init -g cmd/api/main.go -o docs/swagger
+	swag init -g ./cmd/api/main.go -o ./docs/swagger
 	
 .DEFAULT_GOAL := build
