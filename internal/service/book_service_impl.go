@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/AhmadMuj/books-api-go/internal/errors"
@@ -21,6 +22,10 @@ func (s *bookService) CreateBook(ctx context.Context, book *models.Book) error {
 	// Invalidate list cache
 	if err := s.cache.InvalidateBooksList(ctx); err != nil {
 		fmt.Printf("Failed to invalidate books list cache: %v\n", err)
+	}
+
+	if err := s.eventService.PublishBookCreated(ctx, book); err != nil {
+		log.Printf("Failed to publish book created event: %v\n", err)
 	}
 
 	return nil
@@ -92,6 +97,9 @@ func (s *bookService) UpdateBook(ctx context.Context, id uint, book *models.Book
 	if err := s.cache.InvalidateBooksList(ctx); err != nil {
 		fmt.Printf("Failed to invalidate books list cache: %v\n", err)
 	}
+	if err := s.eventService.PublishBookUpdated(ctx, book); err != nil {
+		log.Printf("Failed to publish book created event: %v\n", err)
+	}
 
 	return nil
 }
@@ -107,6 +115,9 @@ func (s *bookService) DeleteBook(ctx context.Context, id uint) error {
 	}
 	if err := s.cache.InvalidateBooksList(ctx); err != nil {
 		fmt.Printf("Failed to invalidate books list cache: %v\n", err)
+	}
+	if err := s.eventService.PublishBookDeleted(ctx, id); err != nil {
+		log.Printf("Failed to publish book created event: %v\n", err)
 	}
 
 	return nil

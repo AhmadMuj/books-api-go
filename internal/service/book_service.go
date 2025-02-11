@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/AhmadMuj/books-api-go/internal/cache"
+	"github.com/AhmadMuj/books-api-go/internal/events"
 	"github.com/AhmadMuj/books-api-go/internal/models"
 	"github.com/AhmadMuj/books-api-go/internal/repository"
 )
@@ -17,13 +18,15 @@ type BookService interface {
 }
 
 type bookService struct {
-	repo  repository.BookRepository
-	cache cache.Cache
+	repo         repository.BookRepository
+	cache        cache.Cache
+	eventService events.EventService
 }
 
-func NewBookService(repo repository.BookRepository, cache cache.Cache) BookService {
+func NewBookService(repo repository.BookRepository, cache cache.Cache, eventService events.EventService) BookService {
 	return &bookService{
-		repo:  repo,
-		cache: cache,
+		repo:         repo,
+		cache:        cache,
+		eventService: eventService,
 	}
 }

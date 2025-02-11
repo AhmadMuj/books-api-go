@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/AhmadMuj/books-api-go/internal/cache"
 	"github.com/AhmadMuj/books-api-go/internal/config"
+	"github.com/AhmadMuj/books-api-go/internal/events"
 	"github.com/AhmadMuj/books-api-go/internal/handlers"
 	"github.com/AhmadMuj/books-api-go/internal/repository"
 	"github.com/AhmadMuj/books-api-go/internal/service"
@@ -39,11 +41,31 @@ func main() {
 	}
 	defer cacheInstance.Close()
 
+	kafkaProducer, err := events.NewKafkaProducer(cfg)
+	if err != nil {
+		log.Fatal("Failed to initialize Kafka producer:", err)
+	}
+	defer kafkaProducer.Close()
+
+	// Initialize event service
+	eventService := events.NewEventService(kafkaProducer)
+
+	// Optionally initialize consumer
+	kafkaConsumer, err := events.NewKafkaConsumer(cfg)
+	if err != nil {
+		log.Fatal("Failed to initialize Kafka consumer:", err)
+	}
+	defer kafkaConsumer.Close()
+
+	if err := kafkaConsumer.Start(context.Background()); err != nil {
+		log.Fatal("Failed to start Kafka consumer:", err)
+	}
+
 	// Initialize repository
 	bookRepo := repository.NewBookRepository(db.DB)
 
 	// Initialize service
-	bookService := service.NewBookService(bookRepo, cacheInstance)
+	bookService := service.NewBookService(bookRepo, cacheInstance, eventService)
 
 	// Initialize handler
 	bookHandler := handlers.NewBookHandler(bookService)
