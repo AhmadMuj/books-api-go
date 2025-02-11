@@ -3,7 +3,7 @@ FROM golang:1.22
 WORKDIR /app
 
 # Install air for hot reload
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@v1.52.2
 
 # Install development dependencies
 RUN apt-get update && apt-get install -y \

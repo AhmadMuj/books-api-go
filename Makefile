@@ -30,5 +30,5 @@ docker-prod:
 docker-down:
 	docker-compose -f deployments/docker-compose.dev.yml down
 	docker-compose -f deployments/docker-compose.prod.yml down
-	
+
 .DEFAULT_GOAL := build
