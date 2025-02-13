@@ -36,10 +36,6 @@ RUN apk add --no-cache ca-certificates tzdata
 # Copy the binary from builder
 COPY --from=builder /app/build/books-api-go .
 
-# Copy wait-for-it script
-COPY deployments/docker/scripts/wait-for-it.sh /usr/local/bin/wait-for-it.sh
-RUN chmod +x /usr/local/bin/wait-for-it.sh
-
 # Use non root user
 USER appuser
 
