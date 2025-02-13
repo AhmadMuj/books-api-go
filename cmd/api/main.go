@@ -16,14 +16,10 @@ import (
 // @title Books API Go
 // @version 1.0
 // @description A RESTful API for managing books with Kafka event streaming and Redis caching
-// @host localhost:8080
 // @BasePath /api/v1
 func main() {
 	// Load configuration
-	cfg, err := config.LoadConfig(".env")
-	if err != nil {
-		log.Fatal("Failed to load configuration:", err)
-	}
+	cfg, _ := config.LoadConfig(".env")
 
 	// Set Gin mode
 	gin.SetMode(cfg.Server.Mode)
@@ -59,6 +55,8 @@ func main() {
 
 	if err := kafkaConsumer.Start(context.Background()); err != nil {
 		log.Fatal("Failed to start Kafka consumer:", err)
+	} else {
+		log.Println("Kafka consumer started")
 	}
 
 	// Initialize repository

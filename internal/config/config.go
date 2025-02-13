@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -48,7 +48,7 @@ func LoadConfig(envFile string) (*Config, error) {
 	}
 
 	if err := godotenv.Load(envFile); err != nil {
-		return nil, fmt.Errorf("error loading env file: %w", err)
+		log.Println("Error loading .env file:", err)
 	}
 
 	config := &Config{
