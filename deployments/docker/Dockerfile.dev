@@ -4,6 +4,8 @@ WORKDIR /app
 
 # Install air for hot reload
 RUN go install github.com/air-verse/air@v1.52.2
+# Install swag CLI
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 # Install development dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,6 +17,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
+RUN make swagger
 
 EXPOSE 8080
 
