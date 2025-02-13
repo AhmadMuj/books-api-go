@@ -11,13 +11,13 @@ import (
 type CreateBookRequest struct {
 	Title  string `json:"title" binding:"required"`
 	Author string `json:"author" binding:"required"`
-	Year   int    `json:"year" binding:"required,min=1500,ltefield=CurrentYear"`
+	Year   int    `json:"year" binding:"required,min=1500"`
 }
 
 type UpdateBookRequest struct {
 	Title  string `json:"title" binding:"required"`
 	Author string `json:"author" binding:"required"`
-	Year   int    `json:"year" binding:"required,min=1500,ltefield=CurrentYear"`
+	Year   int    `json:"year" binding:"required,min=1500"`
 }
 
 type BookResponse struct {
